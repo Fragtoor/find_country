@@ -2,39 +2,38 @@ import requests
 from math import sin, cos, sqrt, atan2, radians
 
 
-def get_coordinates(city):
-    url = "https://geocode-maps.yandex.ru/1.x/"
+def get_geo_info(city_name, type_info):
+    if type_info == 'country':
+        url = "https://geocode-maps.yandex.ru/1.x/"
 
-    params = {
-        'geocode': city,
-        'format': 'json',
-        'apikey': "40d1649f-0493-4b70-98ba-98533de7710b"
-    }
+        params = {
+            'geocode': city_name,
+            'format': 'json',
+            'apikey': "40d1649f-0493-4b70-98ba-98533de7710b"
+        }
 
-    response = requests.get(url, params)
-    json = response.json()
-    point_str = json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
-    point_array = [float(x) for x in point_str.split(' ')]
+        response = requests.get(url, params)
+        json = response.json()
 
-    return point_array
+        return \
+            json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
+                'GeocoderMetaData'][
+                'AddressDetails']['Country']['CountryName']
+    else:
+        url = "https://geocode-maps.yandex.ru/1.x/"
 
+        params = {
+            'geocode': city_name,
+            'format': 'json',
+            'apikey': "40d1649f-0493-4b70-98ba-98533de7710b"
+        }
 
-def get_country(city):
-    url = "https://geocode-maps.yandex.ru/1.x/"
+        response = requests.get(url, params)
+        json = response.json()
+        point_str = json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']
+        point_array = [float(x) for x in point_str.split(' ')]
 
-    params = {
-        'geocode': city,
-        'format': 'json',
-        'apikey': "40d1649f-0493-4b70-98ba-98533de7710b"
-    }
-
-    response = requests.get(url, params)
-    json = response.json()
-
-    return \
-        json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
-            'GeocoderMetaData'][
-            'AddressDetails']['Country']['CountryName']
+        return point_array
 
 
 def get_distance(p1, p2):
